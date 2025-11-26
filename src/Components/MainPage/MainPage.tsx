@@ -28,7 +28,7 @@ const MainPage = () => {
     seconds: 51
   });
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [tasks, setTasks] = useState([
+  const [tasks, ] = useState([
     { id: 1, name: 'Follow our Twitter', status: 'Pending', completed: false },
     { id: 2, name: 'Join our Telegram', status: 'Pending', completed: false },
     { id: 3, name: 'Add to CoinMarketCap Watchlist', status: 'Pending', completed: false }
@@ -37,7 +37,7 @@ const MainPage = () => {
   const tasksCompleted = tasks.filter(t => t.completed).length;
 
   // Sponsor address from API - using dummy data for now
-  const [sponsorAddress, setSponsorAddress] = useState('2pug1d9Czm5kCoZWU4kL9BFwXfLAvx');
+  const [sponsorAddress,] = useState('2pug1d9Czm5kCoZWU4kL9BFwXfLAvx');
 
   // Format address to show first 5, ..., last 5
   const formatAddress = (address: string) => {
@@ -62,7 +62,7 @@ const MainPage = () => {
   // }, []);
 
   // Dummy data for cycle cards - replace with API call
-  const [cycleCards, setCycleCards] = useState([
+  const [cycleCards,] = useState([
     {
       id: 1,
       cycle: 6,
