@@ -835,15 +835,6 @@
   z-index: 1;
 }
 
-@media (min-width: 1024px) {
-  .cycle-section {
-    grid-template-columns: repeat(4, 1fr);
-    gap: 30px;
-  }
-  .stat-card {
-    padding: 20px;
-  }
-}
 
 .cycle-card {
   background: rgb(225, 243, 255);
@@ -1244,6 +1235,13 @@
   display: none;
 }
 
+@media (min-width: 1024px) {
+    .cycle-section {
+      grid-template-columns: repeat(4, 1fr);
+      gap: 30px;
+    }
+ 
+  }
 /* Responsive Modal */
 @media (max-width: 768px) {
   .modal-content {
