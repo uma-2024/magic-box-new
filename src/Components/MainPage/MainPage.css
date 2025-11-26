@@ -1326,9 +1326,9 @@
 }
 
 @media (max-width: 480px) {
-  .countdown-section {
+  /* .countdown-section {
     grid-template-columns: 1fr;
-  }
+  } */
 
   .countdown-value {
     font-size: 20px;
