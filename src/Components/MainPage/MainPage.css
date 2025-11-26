@@ -1344,5 +1344,18 @@
   .card-title {
     font-size: 18px;
   }
+  .wallet-button {
+    padding: 10px 8px;
+    font-size: 12px;
+  }
+  .main-balance {
+    font-size: 20px;
+  }
+  .sol-balance {
+    font-size: 20px;
+  }
+  .sol-icon {
+    width: 34%;
+  }
 }
 
