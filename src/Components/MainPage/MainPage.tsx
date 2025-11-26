@@ -407,10 +407,12 @@ const MainPage = () => {
             
             {/* Reward Available Card */}
             <div className="reward-header-card">
-              <div className="reward-header-icon">
-                <img src={rewardModalIcon} alt="Reward" className="reward-icon-image" />
+              <div className="reward-header-top">
+                <div className="reward-header-icon">
+                  <img src={rewardModalIcon} alt="Reward" className="reward-icon-image" />
+                </div>
+                <h2 className="reward-header-title">Reward Available</h2>
               </div>
-              <h2 className="reward-header-title">Reward Available</h2>
               <p className="reward-header-subtitle">Complete tasks below to unlock your claim</p>
             </div>
 

@@ -1061,14 +1061,21 @@
   border-radius: 16px;
   padding: 20px;
   margin-bottom: 20px;
-  text-align: center;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.reward-header-top {
+  display: flex;
+  align-items: center;
+  gap: 12px;
 }
 
 .reward-header-icon {
-  width: 50px;
-  height: 50px;
-  margin: 0 auto 12px;
+  width: 16%;
+  flex-shrink: 0;
   /* background: #8a2be2; */
   border-radius: 12px;
   display: flex;
@@ -1076,7 +1083,7 @@
   justify-content: center;
   color: white;
   font-size: 28px;
-  padding: 8px;
+  /* padding: 8px; */
 }
 
 .reward-icon-image {
@@ -1086,7 +1093,7 @@
 }
 
 .reward-header-title {
-  margin: 0 0 8px 0;
+  margin: 0;
   font-size: 22px;
   font-weight: 700;
   color: #1a1a1a;
