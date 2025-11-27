@@ -1247,9 +1247,22 @@
   flex-shrink: 0;
 }
 
-.task-open-button:hover {
+.task-open-button:hover:not(:disabled) {
   background: #7fc9fd;
   transform: translateY(-1px);
+}
+
+.task-open-button:disabled,
+.task-open-button.disabled {
+  background: #9ca3af;
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+.task-open-button:disabled:hover,
+.task-open-button.disabled:hover {
+  background: #9ca3af;
+  transform: none;
 }
 
 /* Progress Section */

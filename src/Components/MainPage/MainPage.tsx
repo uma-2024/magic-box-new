@@ -451,10 +451,11 @@ const MainPage = () => {
                     <p className="task-status">Status: {task.status}</p>
                   </div>
                   <button 
-                    className="task-open-button"
+                    className={`task-open-button ${task.completed ? 'disabled' : ''}`}
                     onClick={() => openTask(task.id)}
+                    disabled={task.completed}
                   >
-                    Open
+                    {task.completed ? 'Completed' : 'Open'}
                   </button>
                 </div>
               ))}
