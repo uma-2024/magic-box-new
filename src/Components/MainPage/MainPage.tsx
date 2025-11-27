@@ -28,7 +28,7 @@ const MainPage = () => {
     seconds: 51
   });
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [tasks, ] = useState([
+  const [tasks, setTasks] = useState([
     { id: 1, name: 'Follow our Twitter', status: 'Pending', completed: false },
     { id: 2, name: 'Join our Telegram', status: 'Pending', completed: false },
     { id: 3, name: 'Add to CoinMarketCap Watchlist', status: 'Pending', completed: false }
@@ -159,10 +159,31 @@ const MainPage = () => {
 
   const openTask = (taskId: number) => {
     // Handle opening task links
-    const task = tasks.find(t => t.id === taskId);
-    if (task) {
-      // You can add actual links here
-      console.log(`Opening ${task.name}`);
+    let url = '';
+    switch (taskId) {
+      case 1:
+        url = 'https://x.com/summitofficial2';
+        break;
+      case 2:
+        url = 'https://t.me/officialsummit';
+        break;
+      case 3:
+        url = 'https://coinmarketcap.com/currencies/summit/';
+        break;
+      default:
+        return;
+    }
+    if (url) {
+      window.open(url, '_blank', 'noopener,noreferrer');
+      
+      // Mark task as completed after opening the link
+      setTasks(prevTasks => 
+        prevTasks.map(task => 
+          task.id === taskId 
+            ? { ...task, status: 'Completed', completed: true }
+            : task
+        )
+      );
     }
   };
 
@@ -429,14 +450,12 @@ const MainPage = () => {
                     <h3 className="task-title">{task.name}</h3>
                     <p className="task-status">Status: {task.status}</p>
                   </div>
-                  {task.id !== 3 && (
-                    <button 
-                      className="task-open-button"
-                      onClick={() => openTask(task.id)}
-                    >
-                      Open
-                    </button>
-                  )}
+                  <button 
+                    className="task-open-button"
+                    onClick={() => openTask(task.id)}
+                  >
+                    Open
+                  </button>
                 </div>
               ))}
             </div>
