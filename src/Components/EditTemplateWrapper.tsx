@@ -5,6 +5,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import { useRouter } from "../mocks/next-navigation";
 import fabric from "../fabric-namespace";
+import type { Canvas as FabricCanvas, Object as FabricObject, Image as FabricImage } from "fabric";
 interface Key {
   param: string;
   type: string;
@@ -14,7 +15,7 @@ interface Key {
 const EditTemplatePage = () => {
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const wrapperRef = useRef<HTMLDivElement | null>(null);
-  const [canvas, setCanvas] = useState<fabric.Canvas | null>(null);
+  const [canvas, setCanvas] = useState<FabricCanvas | null>(null);
   const [newText, setNewText] = useState("");
   const [plainText, setPlainText] = useState("");
   const [svgElements, setSvgElements] = useState<{ id: string; svg: string }[]>(
@@ -27,7 +28,7 @@ const EditTemplatePage = () => {
   const apiIp = import.meta.env.VITE_API_URL || "http://localhost:3000/api/";
   const router = useRouter();
   const [showSuccessModal, setShowSuccessModal] = useState(false);
-  const [uploadedSvgObj, setUploadedSvgObj] = useState<fabric.Object | null>(
+  const [uploadedSvgObj, setUploadedSvgObj] = useState<FabricObject | null>(
     null
   );
   const [svgOpacity, setSvgOpacity] = useState<number>(1);
@@ -59,7 +60,7 @@ const EditTemplatePage = () => {
   }>>([]);
   const [showCertificates, setShowCertificates] = useState(false);
   const [loadingCertificates, setLoadingCertificates] = useState(false);
-  function parseHtmlToCanvas(html: string, fabricCanvas: fabric.Canvas): void {
+  function parseHtmlToCanvas(html: string, fabricCanvas: FabricCanvas): void {
     // 1. Clear out any existing objects
     fabricCanvas.clear();
     
@@ -80,10 +81,10 @@ const EditTemplatePage = () => {
     }, 0);
   }
 
-  function parseHtmlToCanvasInternal(html: string, fabricCanvas: fabric.Canvas, container: HTMLElement): void {
+  function parseHtmlToCanvasInternal(html: string, fabricCanvas: FabricCanvas, container: HTMLElement): void {
 
     // Helper function to parse and apply radial gradient
-    const applyRadialGradient = (gradientStr: string, canvas: fabric.Canvas, callback?: () => void) => {
+    const applyRadialGradient = (gradientStr: string, canvas: FabricCanvas, callback?: () => void) => {
       try {
         // Parse radial-gradient(circle at top, rgb(0,14,40), rgb(0, 26, 59) 70%)
         const radialMatch = gradientStr.match(/radial-gradient\(([^)]+)\)/);
@@ -168,7 +169,7 @@ const EditTemplatePage = () => {
         
         // Convert to data URL and set as background
         const dataURL = tempCanvas.toDataURL();
-        fabric.Image.fromURL(dataURL, (img: fabric.Image) => {
+        (fabric.Image as any).fromURL(dataURL, (img: any) => {
           if (!img) {
             console.error("Failed to create image from gradient data URL");
             if (callback) callback();
@@ -198,7 +199,7 @@ const EditTemplatePage = () => {
     };
 
     // Helper function to apply SVG as background image
-    const applySvgBackground = async (svgUrl: string, canvas: fabric.Canvas) => {
+    const applySvgBackground = async (svgUrl: string, canvas: FabricCanvas) => {
       try {
         // Fetch SVG content
         const response = await fetch(svgUrl);
@@ -212,7 +213,7 @@ const EditTemplatePage = () => {
         // Load SVG using fabric
         const { objects, options } = await fabric.loadSVGFromString(svgText);
         const validObjects = objects.filter(
-          (obj: any): obj is fabric.Object => obj !== null
+          (obj: any): obj is FabricObject => obj !== null
         );
         
         if (validObjects.length === 0) {
@@ -228,7 +229,7 @@ const EditTemplatePage = () => {
         const canvasHeight = canvas.getHeight();
         
         // Get SVG bounds
-        const bounds = (svgGroup as fabric.Object).getBoundingRect();
+        const bounds = (svgGroup as FabricObject).getBoundingRect();
         const svgWidth = bounds.width || canvasWidth;
         const svgHeight = bounds.height || canvasHeight;
         
@@ -237,7 +238,7 @@ const EditTemplatePage = () => {
         const scaleY = canvasHeight / svgHeight;
         const scale = Math.max(scaleX, scaleY); // Cover entire canvas
         
-        (svgGroup as fabric.Object).set({
+        (svgGroup as FabricObject).set({
           left: 0,
           top: 0,
           scaleX: scale,
@@ -269,7 +270,7 @@ const EditTemplatePage = () => {
           const dataURL = tempCanvas.toDataURL('image/png');
           
           // Set as background image
-          fabric.Image.fromURL(dataURL, (img: fabric.Image) => {
+          (fabric.Image as any).fromURL(dataURL, (img: any) => {
             img.set({
               left: 0,
               top: 0,
@@ -572,9 +573,9 @@ const EditTemplatePage = () => {
     // Collect SVGs
     container.querySelectorAll("svg").forEach((svg) => {
       allElements.push({
-        element: svg.parentElement as HTMLElement || svg as HTMLElement,
+        element: (svg.parentElement || svg) as unknown as HTMLElement,
         type: "svg",
-        zIndex: getZIndex(svg as HTMLElement)
+        zIndex: getZIndex(svg as unknown as HTMLElement)
       });
     });
     
@@ -819,12 +820,12 @@ const EditTemplatePage = () => {
         // Load SVG using fabric
         fabric.loadSVGFromString(svgString).then((result) => {
           const svgObj = fabric.util.groupSVGElements(result.objects, result.options);
-          (svgObj as fabric.Object).set({
+          (svgObj as FabricObject).set({
             left: pos.left,
             top: pos.top,
             selectable: true,
           });
-          fabricCanvas.add(svgObj as fabric.Object);
+          fabricCanvas.add(svgObj as FabricObject);
           fabricCanvas.renderAll();
         }).catch(err => {
           console.error("Error loading SVG:", err);
@@ -973,7 +974,7 @@ const EditTemplatePage = () => {
    * Serializes all objects on a Fabric canvas into an HTML string
    * with absolute‐positioned <p> and <img> (and SVG) tags.
    */
-  const extractCanvasToHtml = (canvas: fabric.Canvas) => {
+  const extractCanvasToHtml = (canvas: FabricCanvas) => {
     const width = canvas.getWidth();
     const height = canvas.getHeight();
 
@@ -987,13 +988,13 @@ const EditTemplatePage = () => {
         .replace(/'/g, "&#039;");
 
     // Serialize each object
-    const parts = canvas.getObjects().map((obj: fabric.Object) => {
+    const parts = canvas.getObjects().map((obj: FabricObject) => {
       const left = obj.left ?? 0;
       const top = obj.top ?? 0;
 
       // 1) TEXTBOXES → <p>
       if (obj.type === "textbox") {
-        const t = obj as fabric.Textbox;
+        const t = obj as any;
         const txt = escapeHtml(t.text || "");
         return `
 <p style="
@@ -1014,7 +1015,7 @@ ${txt}
       }
 
       if (obj.type === "image") {
-        const img = obj as unknown as fabric.Image;
+        const img = obj as unknown as FabricImage;
         const src = img.getSrc() as string;
         const w = img.getScaledWidth();
         const h = img.getScaledHeight();
@@ -1202,7 +1203,7 @@ ${parts.join("")}
     if (!canvas) return;
     const activeObject = canvas.getActiveObject();
     if (activeObject && activeObject.type === "textbox") {
-      (activeObject as fabric.Textbox).set(prop, value);
+      (activeObject as any).set(prop, value);
       canvas.renderAll();
     }
   };
@@ -1230,9 +1231,9 @@ ${parts.join("")}
     const width = canvas.getWidth();
     const height = canvas.getHeight();
 
-    const htmlElements = canvas.getObjects().map((obj: fabric.Object) => {
+    const htmlElements = canvas.getObjects().map((obj: FabricObject) => {
       if (obj.type === "textbox") {
-        const t = obj as fabric.Textbox;
+        const t = obj as any;
         return `<p style="position:absolute; left:${t.left}px; top:${
           t.top
         }px; font-size:${t.fontSize}px; font-family:${t.fontFamily}; color:${
@@ -1339,12 +1340,12 @@ ${svgDivs.join("\n")}
       try {
         const { objects, options } = await fabric.loadSVGFromString(svgText);
         const validObjects = objects.filter(
-          (obj: any): obj is fabric.Object => obj !== null
+          (obj: any): obj is FabricObject => obj !== null
         );
         const svg = fabric.util.groupSVGElements(validObjects, options);
 
         const uniqueId = `svg-${Date.now()}`;
-        (svg as fabric.Object).set({
+        (svg as FabricObject).set({
           id: uniqueId,
           left: 400,
           top: 300,
@@ -1352,7 +1353,7 @@ ${svgDivs.join("\n")}
           scaleY: 0.5,
         });
 
-        canvas.add(svg as fabric.Object);
+        canvas.add(svg as FabricObject);
         canvas.renderAll();
 
         setSvgElements((prev) => [...prev, { id: uniqueId, svg: svgText }]);
@@ -1381,12 +1382,12 @@ ${svgDivs.join("\n")}
       try {
         const { objects, options } = await fabric.loadSVGFromString(svgText);
         const validObjects = objects.filter(
-          (obj: any): obj is fabric.Object => obj !== null
+          (obj: any): obj is FabricObject => obj !== null
         );
         const svg = fabric.util.groupSVGElements(validObjects, options);
 
         const uniqueId = `svg-${Date.now()}`;
-        (svg as fabric.Object).set({
+        (svg as FabricObject).set({
           id: uniqueId,
           left: 100,
           top: 100,
@@ -1398,13 +1399,13 @@ ${svgDivs.join("\n")}
           data: "watermark",
         });
 
-        (svg as fabric.Object).setCoords();
+        (svg as FabricObject).setCoords();
 
-        canvas.add(svg as fabric.Object);
+        canvas.add(svg as FabricObject);
 
         canvas.renderAll();
 
-        setUploadedSvgObj(svg as fabric.Object);
+        setUploadedSvgObj(svg as FabricObject);
         setSvgElements((prev) => [...prev, { id: uniqueId, svg: svgText }]);
       } catch (err) {
         console.error("Failed to load SVG:", err);
@@ -1539,9 +1540,9 @@ ${completeHtml}
     const width = canvas.getWidth();
     const height = canvas.getHeight();
 
-    const htmlElements = canvas.getObjects().map((obj: fabric.Object) => {
+    const htmlElements = canvas.getObjects().map((obj: FabricObject) => {
       if (obj.type === "textbox") {
-        const t = obj as fabric.Textbox;
+        const t = obj as any;
         const isDynamic = /^\$\{[\w]+\}$/.test(t.text || "");
         return `<p style="position:absolute; left:${t.left}px; top:${
           t.top
@@ -1600,13 +1601,13 @@ ${completeHtml}
     const qrObj = canvas
       .getObjects()
       .find(
-        (obj: fabric.Object) =>
+        (obj: FabricObject) =>
           obj.type === "image" &&
-          (obj as unknown as fabric.Image).getSrc().includes("api.qrserver.com")
+          (obj as unknown as FabricImage).getSrc().includes("api.qrserver.com")
       );
 
     if (qrObj && qrObj.type === "image") {
-      const image = qrObj as unknown as fabric.Image;
+      const image = qrObj as unknown as FabricImage;
       const src = image.getSrc();
       const left = image.left || 0;
       const top = image.top || 0;
@@ -1696,7 +1697,7 @@ ${svgDivs.join("\n")}
     }));
 
     if (canvas) {
-      canvas.getObjects().forEach((obj: fabric.Object) => {
+      canvas.getObjects().forEach((obj: FabricObject) => {
         if (
           obj.type === "textbox" &&
           obj instanceof fabric.Textbox &&

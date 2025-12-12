@@ -6,7 +6,7 @@ export function saveFilePlugin(): Plugin {
   return {
     name: 'save-file-plugin',
     configureServer(server) {
-      server.middlewares.use('/api/save-certificate', async (req, res, next) => {
+      server.middlewares.use('/api/save-certificate', async (req, res, _next) => {
         if (req.method !== 'POST') {
           res.statusCode = 405;
           res.end('Method not allowed');
@@ -65,7 +65,7 @@ export function saveFilePlugin(): Plugin {
       });
 
       // Endpoint to list all certificate files
-      server.middlewares.use('/api/list-certificates', async (req, res, next) => {
+      server.middlewares.use('/api/list-certificates', async (req, res, _next) => {
         if (req.method !== 'GET') {
           res.statusCode = 405;
           res.end('Method not allowed');

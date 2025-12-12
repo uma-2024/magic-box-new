@@ -28,23 +28,12 @@ declare module "../fabric-namespace" {
   
   export default fabric;
   export { fabric };
+  
 }
 
 // Global namespace declaration for fabric usage in code (allows fabric.Canvas, fabric.Image, etc.)
 // This allows using fabric as both an imported object and a namespace
 declare global {
-  var fabric: {
-    Canvas: typeof FabricCanvas;
-    Textbox: typeof FabricTextbox;
-    Rect: typeof FabricRect;
-    Image: typeof FabricImage;
-    Text: typeof FabricText;
-    Object: typeof FabricObject;
-    util: typeof util;
-    loadSVGFromString: typeof loadSVGFromString;
-    version: typeof version;
-  };
-  
   namespace fabric {
     export type Canvas = FabricCanvas;
     export type Textbox = FabricTextbox;
@@ -52,9 +41,6 @@ declare global {
     export type Image = FabricImage;
     export type Text = FabricText;
     export type Object = FabricObject;
-    export const util: typeof util;
-    export const loadSVGFromString: typeof loadSVGFromString;
-    export const version: typeof version;
   }
 }
 

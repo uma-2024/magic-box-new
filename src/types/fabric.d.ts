@@ -74,11 +74,22 @@ declare module "fabric" {
   export function loadSVGFromString(svgString: string): Promise<{ objects: Object[]; options: any }>;
   
   export const version: string;
-  [key: string]: any;
 }
 
 // Global namespace for fabric usage (for compatibility with fabric-namespace)
 declare global {
+  const fabric: {
+    Canvas: typeof import("fabric").Canvas;
+    Textbox: typeof import("fabric").Textbox;
+    Rect: typeof import("fabric").Rect;
+    Image: typeof import("fabric").FabricImage;
+    Text: typeof import("fabric").FabricText;
+    Object: typeof import("fabric").FabricObject;
+    util: typeof import("fabric").util;
+    loadSVGFromString: typeof import("fabric").loadSVGFromString;
+    version: typeof import("fabric").version;
+  };
+  
   namespace fabric {
     export type Canvas = import("fabric").Canvas;
     export type Textbox = import("fabric").Textbox;
@@ -86,7 +97,7 @@ declare global {
     export type Image = import("fabric").FabricImage;
     export type Text = import("fabric").FabricText;
     export type Object = import("fabric").FabricObject;
-    export const util: import("fabric").util;
+    export const util: typeof import("fabric").util;
     export const loadSVGFromString: typeof import("fabric").loadSVGFromString;
     export const version: typeof import("fabric").version;
   }
