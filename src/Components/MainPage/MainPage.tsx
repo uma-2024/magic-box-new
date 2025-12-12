@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { IoWalletOutline, IoCloseOutline } from 'react-icons/io5';
+import { IoCloseOutline } from 'react-icons/io5';
 import { FiCopy, FiLock, FiCheck } from 'react-icons/fi';
 import { FaTwitter, FaTelegramPlane } from 'react-icons/fa';
 import { SiCoinmarketcap } from 'react-icons/si';
@@ -7,7 +7,6 @@ import './MainPage.css';
 import image from '../../assets/logo.png';
 import solImage from '../../assets/Solana_logo.png';
 import availableSlotIcon from '../../assets/avilableSlot.png';
-import headerIcon from '../../assets/headerlogo.png';
 import directTeamIcon from '../../assets/icon a4.png';
 import totalBuySlotIcon from '../../assets/icon a5.png';
 import totalDepositIcon from '../../assets/icon a6.png';
@@ -19,8 +18,13 @@ import cycleDepositIcon from '../../assets/icon a10.png';
 import cycleCalendarIcon from '../../assets/icon a11.png';
 import cycleRewardIcon from '../../assets/icon a12.png';
 import rewardModalIcon from '../../assets/icon a12.png';
+import EditTemplateWrapper from '../EditTemplateWrapper';
+import Downline from '../Downline/Downline';
+import Navbar from '../Navbar/Navbar';
 
 const MainPage = () => {
+  const [showEditTemplate, setShowEditTemplate] = useState(false);
+  const [showDownline, setShowDownline] = useState(false);
   const [countdown, setCountdown] = useState({
     days: 0,
     hours: 2,
@@ -187,30 +191,35 @@ const MainPage = () => {
     }
   };
 
+  // If Edit Template is shown, render EditTemplatePage
+  if (showEditTemplate) {
+    return (
+      <div className="main-page">
+        <div className="edit-template-wrapper">
+          <button 
+            className="back-to-main-button"
+            onClick={() => setShowEditTemplate(false)}
+          >
+            ← Back to Main
+          </button>
+          <EditTemplateWrapper />
+        </div>
+      </div>
+    );
+  }
+
+  // If Downline is shown, render Downline component
+  if (showDownline) {
+    return <Downline onBack={() => setShowDownline(false)} />;
+  }
+
   return (
     <div className="main-page">
       {/* Background particles effect */}
       <div className="particles"></div>
       
       {/* Header */}
-      <header className="header">
-        <div className="logo-section">
-          <img src={headerIcon} alt="Magic Box Logo" className="header-logo" />
-         
-        </div>
-        <div className="header-right">
-          <button className="wallet-button">
-            <IoWalletOutline className="wallet-icon" />
-            <span>Connect Wallet</span>
-          </button>
-          {/* <button className="icon-button">
-            <IoSettingsOutline />
-          </button>
-          <button className="icon-button">
-            <IoNotificationsOutline />
-          </button> */}
-        </div>
-      </header>
+      <Navbar onEditTemplate={() => setShowEditTemplate(true)} />
 
       {/* Main Title */}
       <div className="main-title">
@@ -357,6 +366,12 @@ const MainPage = () => {
               <img src={directTeamIcon} alt="Direct Team" className="stat-icon" />
               <div className="stat-label">Direct Team</div>
               <div className="stat-value">0</div>
+              <button 
+                className="see-downline-button"
+                onClick={() => setShowDownline(true)}
+              >
+                See Downline
+              </button>
             </div>
             <div className="stat-card">
               <img src={totalBuySlotIcon} alt="Total Buy Slot" className="stat-icon" />
