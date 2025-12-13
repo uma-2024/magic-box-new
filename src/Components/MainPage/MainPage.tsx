@@ -23,12 +23,16 @@ import Downline from '../Downline/Downline';
 import Navbar from '../Navbar/Navbar';
 
 const MainPage = () => {
+  const [isCycleEnded, setIsCycleEnded] = useState(false);
+const [showSlotModal, setShowSlotModal] = useState(false);
+const [selectedSlot, setSelectedSlot] = useState<number | null>(null);
+
   const [showEditTemplate, setShowEditTemplate] = useState(false);
   const [showDownline, setShowDownline] = useState(false);
   const [countdown, setCountdown] = useState({
     days: 0,
-    hours: 2,
-    minutes: 47,
+    hours: 0,
+    minutes: 0,
     seconds: 51
   });
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -64,6 +68,12 @@ const MainPage = () => {
   //   };
   //   fetchSponsorAddress();
   // }, []);
+const slotDetails = {
+  availableSummit: "1,500,000",
+  totalSlot: 1,
+  slotAmount: "500,000",
+  totalAmount: "2,000,000"
+};
 
   // Dummy data for cycle cards - replace with API call
   const [cycleCards,] = useState([
@@ -212,6 +222,40 @@ const MainPage = () => {
   if (showDownline) {
     return <Downline onBack={() => setShowDownline(false)} />;
   }
+useEffect(() => {
+  const interval = setInterval(() => {
+    setCountdown(prev => {
+      let { days, hours, minutes, seconds } = prev;
+
+      // ⛔ Countdown finished
+      if (days === 0 && hours === 0 && minutes === 0 && seconds === 0) {
+        clearInterval(interval);
+        setIsCycleEnded(true);
+        return prev;
+      }
+
+      if (seconds > 0) {
+        seconds--;
+      } else if (minutes > 0) {
+        minutes--;
+        seconds = 59;
+      } else if (hours > 0) {
+        hours--;
+        minutes = 59;
+        seconds = 59;
+      } else if (days > 0) {
+        days--;
+        hours = 23;
+        minutes = 59;
+        seconds = 59;
+      }
+
+      return { days, hours, minutes, seconds };
+    });
+  }, 1000);
+
+  return () => clearInterval(interval);
+}, []);
 
   return (
     <div className="main-page">
@@ -250,7 +294,36 @@ const MainPage = () => {
             
             <div className="progress-section">
               
-              <button className="cycle-wait-button">Wait for next cycle</button>
+            {!isCycleEnded ? (
+  <button className="cycle-wait-button">
+    Wait for next cycle
+  </button>
+) : (
+  <div className="cycle-ended-buttons">
+
+  <button
+    className="cycle-button"
+    onClick={() => {
+      setSelectedSlot(1);
+      setShowSlotModal(true);
+    }}
+  >
+    1
+  </button>
+
+  <button
+    className="cycle-button"
+    onClick={() => {
+      setSelectedSlot(2);
+      setShowSlotModal(true);
+    }}
+  >
+    2
+  </button>
+</div>
+
+)}
+
             </div>
             
             <div className="countdown-section">
@@ -498,6 +571,55 @@ const MainPage = () => {
           </div>
         </div>
       )}
+      {showSlotModal && (
+  <div className="modal-overlay" onClick={() => setShowSlotModal(false)}>
+    <div className="modal-content slot-modal" onClick={(e) => e.stopPropagation()}>
+
+      {/* Header */}
+      <div className="slot-modal-header">
+        <img src={image} alt="Magic Box" className="slot-logo" />
+        <h2>My Magic Box</h2>
+      </div>
+
+      {/* Slot Info */}
+      <div className="slot-details">
+      
+
+        <div className="slot-row">
+          <span>Available Summit</span>
+          <span>{slotDetails.availableSummit}</span>
+        </div>
+
+        <div className="slot-row">
+          <span>Total Slot</span>
+          <span>{slotDetails.totalSlot}</span>
+        </div>
+
+        <div className="slot-row">
+          <span>Slot Amount</span>
+          <span>{slotDetails.slotAmount}</span>
+        </div>
+
+        <div className="slot-row total">
+          <span>Total Amount</span>
+          <span>{slotDetails.totalAmount}</span>
+        </div>
+      </div>
+
+      {/* Actions */}
+      <div className="slot-actions">
+        <button className="cancel-btn" onClick={() => setShowSlotModal(false)}>
+          Cancel
+        </button>
+        <button className="buy-btn">
+          Buy Slot
+        </button>
+      </div>
+
+    </div>
+  </div>
+)}
+
     </div>
   );
 };
