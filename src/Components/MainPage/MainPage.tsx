@@ -21,12 +21,13 @@ import rewardModalIcon from '../../assets/icon a12.png';
 import EditTemplateWrapper from '../EditTemplateWrapper';
 import Downline from '../Downline/Downline';
 import Navbar from '../Navbar/Navbar';
+import { useNavigate } from 'react-router-dom';
 
 const MainPage = () => {
   const [isCycleEnded, setIsCycleEnded] = useState(false);
 const [showSlotModal, setShowSlotModal] = useState(false);
 const [selectedSlot, setSelectedSlot] = useState<number | null>(null);
-
+const navigate = useNavigate();
   const [showEditTemplate, setShowEditTemplate] = useState(false);
   const [showDownline, setShowDownline] = useState(false);
   const [countdown, setCountdown] = useState({
@@ -219,9 +220,7 @@ const slotDetails = {
   }
 
   // If Downline is shown, render Downline component
-  if (showDownline) {
-    return <Downline onBack={() => setShowDownline(false)} />;
-  }
+
 useEffect(() => {
   const interval = setInterval(() => {
     setCountdown(prev => {
@@ -263,7 +262,7 @@ useEffect(() => {
       <div className="particles"></div>
       
       {/* Header */}
-      <Navbar onEditTemplate={() => setShowEditTemplate(true)} />
+      <Navbar/>
 
       {/* Main Title */}
       <div className="main-title">
@@ -441,7 +440,7 @@ useEffect(() => {
               <div className="stat-value">0</div>
               <button 
                 className="see-downline-button"
-                onClick={() => setShowDownline(true)}
+               onClick={() => navigate('/downline')}
               >
                 See Downline
               </button>
